@@ -105,6 +105,8 @@ void AddPokemon(string& pokemonName, string& pokemonLevel, string& pokemonCaptur
 	cout << "Enter Pokemon Name: ";
 	getline(cin, pokemonName);
 
+	// this loop is to check if the user input is valid
+		// if not valid it will loop
 	while (true)
 	{
 		cout << "Enter Pokemon Level: ";
@@ -112,15 +114,22 @@ void AddPokemon(string& pokemonName, string& pokemonLevel, string& pokemonCaptur
 
 		int level;
 
+		// try catch: this is to prevent the program from crashing
+			// if the user input is not a number, it will loop
+			// if the user input is a number, it will convert it to integer
 		try
 		{
 			level = stoi(pokemonLevel);
 			pokemonLevel = to_string(level);
+
+			// this is to check if the user input is range
+				// if not valid it will cause error which will go to catch
 			if (level < 1 || level > 100) throw exception();
 			break;
 		}
 		catch (const std::exception&)
 		{
+			// this is used only for consitency of the asthetics
 			system("cls");
 			cout
 				<< "Enter Pokemon Name: "
@@ -143,6 +152,7 @@ void AddPokemon(string& pokemonName, string& pokemonLevel, string& pokemonCaptur
 
 void ReleasePokemon(string pokemonName[], string pokemonLevel[], string pokemonCapturePlace[], int MAX)
 {
+
 	while (true)
 	{
 		PokemonListHeading();
@@ -176,7 +186,10 @@ void ReleasePokemon(string pokemonName[], string pokemonLevel[], string pokemonC
 
 		}
 		else
+		{
 			cout << "Catch Pokemon First!" << endl;
+			break;
+		}
 	}
 }
 
@@ -185,6 +198,7 @@ void FeedPokemon(string pokemonName[], string pokemonLevel[], string pokemonCapt
 	while (true)
 	{
 		PokemonListHeading();
+		// check if there is pokemon catched
 		if (LoopDisplayPokemon(pokemonName, pokemonLevel, pokemonCapturePlace, MAX))
 		{
 			int pokemonNo;
@@ -192,33 +206,46 @@ void FeedPokemon(string pokemonName[], string pokemonLevel[], string pokemonCapt
 			cout << "Choose Pokemon to Feed: " << endl;
 
 			FilterInputInt(pokemonNo);
+			pokemonNo--;
 
-			if (pokemonNo == -1)
+			// check if the input is valid
+				// check if the input is in range
+				// check if error number is return
+			if (pokemonNo < 0 || pokemonName[pokemonNo] == "")
 			{
 				cout << "Invalid Input!" << endl;
 				system("pause");
 				system("cls");
+
+				// will skip the other code below and continue the loop
 				continue;
 			}
 			else
 			{
 				system("cls");
 
-				if (stoi(pokemonLevel[pokemonNo - 1]) >= 100)
+				// check pokemon if it is already at max level
+				if (stoi(pokemonLevel[pokemonNo]) >= 100)
 				{
 					cout << "Pokemon is already at Max Level!" << endl;
 					break;
 				}
 
-				cout << pokemonName[pokemonNo - 1] << " Level Up!" << endl;
+				cout << pokemonName[pokemonNo] << " Level Up!" << endl;
 
-				pokemonLevel[pokemonNo - 1] = to_string(stoi(pokemonLevel[pokemonNo - 1]) + 1);
+				// add 1 to the pokemon level
+					// stoi: this converts string to integer then add 1
+					// to_string: this converts integer to string
+				pokemonLevel[pokemonNo] = to_string(stoi(pokemonLevel[pokemonNo]) + 1);
 
 				break;
 			}
 		}
-		else 
+		else
+		{
 			cout << "Catch Pokemon First!" << endl;
+			break;
+		}
 	}
 }
 
@@ -240,8 +267,6 @@ void SortPokemon(string pokemonName[], string pokemonLevel[], string pokemonCapt
 		case 4:
 			return;
 		}
-		system("pause");
-		system("cls");
 	}
 }
 
@@ -259,6 +284,9 @@ void SearchPokemon(string pokemonName[], string pokemonLevel[], string pokemonCa
 
 	cout << "Search Result" << endl;
 
+	// this loop in the array and check which matches 1 by 1
+		// if it matches, it will display the pokemon
+		// if it does not match, it will display no pokemon found
 	for (int i = 0; i < MAX; i++)
 	{
 		if (pokemonName[i] == toSearch)
@@ -278,32 +306,40 @@ void SearchPokemon(string pokemonName[], string pokemonLevel[], string pokemonCa
 
 void SortPokemonBy(string pokemonName[], string pokemonLevel[], string pokemonCapturePlace[], int MAX, string by)
 {
+	// this uses bubble sort
+		// it compares 2 values and swap them if the condition is met
+		// it will loop until all values are sorted
 	for (int i = 0; i < MAX; i++)
 	{
 		for (int j = i + 1; j < MAX; j++)
 		{
+			// sort by name
 			if (pokemonName[i] > pokemonName[j] && pokemonName[j] != "" && by == "String")
 			{
 				SwapValues(pokemonName[i], pokemonName[j]);
 				SwapValues(pokemonLevel[i], pokemonLevel[j]);
 				SwapValues(pokemonCapturePlace[i], pokemonCapturePlace[j]);
+				cout << "Sorted by Name" << endl;
 			}
+			// sort by level
 			else if (pokemonLevel[i] > pokemonLevel[j] && pokemonLevel[j] != "" && by == "Level")
 			{
 				SwapValues(pokemonName[i], pokemonName[j]);
 				SwapValues(pokemonLevel[i], pokemonLevel[j]);
 				SwapValues(pokemonCapturePlace[i], pokemonCapturePlace[j]);
+				cout << "Sorted by Level" << endl;
 			}
+			// sort by capture place
 			else if (pokemonCapturePlace[i] > pokemonCapturePlace[j] && pokemonCapturePlace[j] != "" && by == "Capture Place")
 			{
 				SwapValues(pokemonName[i], pokemonName[j]);
 				SwapValues(pokemonLevel[i], pokemonLevel[j]);
 				SwapValues(pokemonCapturePlace[i], pokemonCapturePlace[j]);
+				cout << "Sorted by Capture Place" << endl;
 			}
 		}
 	}
 
-	cout << "Sorted by Name" << endl;
 
 	LoopDisplayPokemon(pokemonName, pokemonLevel, pokemonCapturePlace, MAX);
 }
@@ -428,6 +464,7 @@ bool LoopDisplayPokemon(string pokemonName[], string pokemonLevel[], string poke
 {
 	bool isThereACatched = false;
 
+	// loop and display only the arrays with value
 	for (int i = 0; i < MAX; i++)
 	{
 		if (pokemonName[i] == "") {
@@ -494,6 +531,9 @@ void FilterInputInt(int& choice)
 
 void SwapValues(string& a, string& b)
 {
+	// this is to swap the values of 2 variables
+		// it uses a temporary variable to store the value of one of the variable
+		// then it will swap the values of the 2 variables
 	string temp = a;
 	a = b;
 	b = temp;
